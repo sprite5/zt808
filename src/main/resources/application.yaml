@@ -1,0 +1,88 @@
+server:
+  port: 6808
+  idleSeconds: 360 #空闲360秒断开连接,设备方至少需要在此时间内发送一条数据
+  maxConnections: 50000
+
+auth:
+  code: 123456
+  blackList: [] #设备号黑名单
+
+message:
+  parser:
+    provider: # msgId -> 自定义解析Provider(返回List<BaseDTO>),不建议类名包含msgId
+      - name: "HeartbeatProvider"
+        msgId: "0x0002"
+        provider: "cn.jascript.zt808.message.parser.provider.HeartbeatMsgParserProvider"
+      - name: "RegisterProvider"
+        msgId: "0x0100"
+        replyMode: "provider"
+        provider: "cn.jascript.zt808.message.parser.provider.RegisterMsgParserProvider"
+      - name: "AuthProvider"
+        msgId: "0x0102"
+        replyMode: "provider"
+        provider: "cn.jascript.zt808.message.parser.provider.AuthMsgParserProvider"
+      - name: "LocationProvider"
+        msgId: "0x0200"
+        replyMode: "general"
+        provider: "cn.jascript.zt808.message.parser.provider.LocationMsgParserProvider"
+      - name: "BatchLocationProvider"
+        msgId: "0x0704"
+        replyMode: "general"
+        provider: "cn.jascript.zt808.message.parser.provider.BatchLocationMsgMsgParserProvider"
+      - name: "TextProvider"
+        msgId: "0x6006"
+        replyMode: "general"
+        provider: "cn.jascript.zt808.message.parser.provider.TextMsgParserProvider"
+    extProvider: # msgId -> 自定义扩展Provider(单个覆盖)
+      - name: "DefaultLocationExtProvider"
+        msgId: "0x0200"
+        provider: "cn.jascript.zt808.message.parser.extprovider.DefaultLocationExtParserProvider"
+      - name: "DefaultLocationExtProvider"
+        msgId: "0x0704"
+        provider: "cn.jascript.zt808.message.parser.extprovider.DefaultLocationExtParserProvider"
+  sender:
+    # 默认使用8300发送消息,可以重截实现
+    provider: "cn.jascript.zt808.message.sender.DefaultPlatformMsgSenderProvider"
+
+duplicate: ## 基于流水号的排重
+  enable: true # 是否开启基于流水号的排重，true | false，默认 true
+  ttlSeconds: 60 # 排重缓存过期时间，单位秒
+  maximumSize: 200000 # 排重缓存最大条目数，避免内存溢出
+
+businessExecutor: ## 业务线程池（用于将业务 Handler 与 IO 解耦）
+  threads: 8 # 业务线程数，默认 2 * CPU 核心
+
+
+redis:
+  enabled: false  # 是否启用redis,启用支持基于HA的多实例模式
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+
+parser:
+  register: "" #解析注册信息类,留空使用 DefaultRegisterParser,可自行实现RegisterParser或继承DefaultRegisterParser
+  locationStatusAndExtension: "" #解析位置状态数据和扩展数据的类,留空使用 DefaultLocationStatusAndExtensionParser,可自行实现LocationStatusAndExtensionParser或继承DefaultLocationStatusAndExtensionParser
+
+forward:
+  provider: "" #转发实现类,留空使用 DefaultForwardProvider,默认转到到日志,可自行实现ForwardProvider或继承DefaultForwardProvider
+
+text: #文本消息下发
+  globalMaxQueue: 50000 #全局最大消息队列数
+  perDeviceMaxQueue: 100 #每个设备最大可保存消息数,超过时使用drop_non_urgent/drop_old 策略
+  expireHours: 24 #消息保存时间
+  minSendIntervalSeconds: 3 # 上线设备发送延迟及发送消息间隔
+  callback: "" #下发消息成功/过期回调,留空使用默认DefaultTextCallback打印日志,可自行实现TextCallback或继承DefaultTextCallback
+
+#httpApi:
+#  enable: true
+#  port: 80
+#  # bindAddress: 0.0.0.0,默认绑定全部
+#  health: true
+#  sendText: true
+#  basicAuth:
+#    enable: true
+#    user: ""
+#    passwd: ""
+#
+#webUi:
+#  enable: true
