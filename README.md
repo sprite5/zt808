@@ -111,35 +111,35 @@
  flowchart TB
  
    subgraph DEV[终端设备]
-     DEV1[终端 TCP 连接]
-     DEV2[上行原始帧 0x7E...0x7E]
+     DEV1["终端 TCP 连接"]
+     DEV2["上行原始帧 0x7E...0x7E"]
    end
  
    subgraph NETTY[Netty Pipeline]
-     A[DelimiterBasedFrameDecoder\n(按 0x7E 切帧)]
-     B[EscapeDecoder\n(反转义 0x7D 0x01/0x02)]
-     C[BccValidDecoder\n(BCC XOR 校验)]
-     D[MessageDecoder\n(解析消息头+体)]
-     E[DataEventHandler\n(业务分发/鉴权拦截/排重)]
+     A["DelimiterBasedFrameDecoder<br/>按 0x7E 切帧"]
+     B["EscapeDecoder<br/>反转义 0x7D 0x01/0x02"]
+     C["BccValidDecoder<br/>BCC XOR 校验"]
+     D["MessageDecoder<br/>解析消息头+体"]
+     E["DataEventHandler<br/>业务分发/鉴权拦截/排重"]
    end
  
    subgraph BIZ[业务组件]
-     SM[SessionManager\n(会话注册/绑定/鉴权标记)]
-     PF[MsgParserProviderFactory\n(msgId->ParserProvider)]
-     EF[MsgExtParserProviderFactory\n(msgId->ExtProvider)]
-     FW[ForwardProviderFactory\n(转发 DTO)]
+     SM["SessionManager<br/>会话注册/绑定/鉴权标记"]
+     PF["MsgParserProviderFactory<br/>msgId 映射 ParserProvider"]
+     EF["MsgExtParserProviderFactory<br/>msgId 映射 ExtProvider"]
+     FW["ForwardProviderFactory<br/>转发 DTO"]
    end
  
    DEV1 -->|TCP| NETTY
    DEV2 --> A --> B --> C --> D --> E
  
    E --> PF
-   PF -->|parse() 返回 DTO 列表| E
+   PF -->|"parse 返回 DTO 列表"| E
    E --> EF
-   EF -->|apply() 扩展 DTO| E
+   EF -->|"apply 扩展 DTO"| E
    E --> FW
  
-   E -->|注册/鉴权成功后绑定| SM
+   E -->|"注册/鉴权成功后绑定"| SM
  ```
 
  ### 下行链路（Platform -> Terminal）
@@ -148,22 +148,22 @@
  flowchart TB
  
    subgraph SRC[命令来源]
-     S1[上层服务/入口]
+     S1[上层服务入口]
    end
  
    subgraph ROUTE[路由与序号]
-     R1[SessionRouter\nterminalId -> Channel]
-     R2[FlowIdGenerator\n生成 flowId(16bit)]
+     R1["SessionRouter<br/>terminalId 映射 Channel"]
+     R2["FlowIdGenerator<br/>生成 flowId 16bit"]
    end
  
    subgraph SEND[下发组包/下发]
-     P1[DefaultPlatformMsgSenderProvider\n组 PlatformMessage]
-     P2[Channel.writeAndFlush(PlatformMessage)]
+     P1["DefaultPlatformMsgSenderProvider<br/>组 PlatformMessage"]
+     P2["Channel.writeAndFlush<br/>PlatformMessage"]
    end
  
    subgraph ENC[编码与网络]
-     E1[EncoderFactory\n(头+体+BCC+转义+0x7E)]
-     E2[TCP 下发到终端]
+     E1["EncoderFactory<br/>头+体+BCC+转义+0x7E"]
+     E2["TCP 下发到终端"]
    end
  
    S1 --> R1 --> R2 --> P1 --> P2 --> E1 --> E2
