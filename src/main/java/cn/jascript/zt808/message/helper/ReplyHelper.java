@@ -1,4 +1,4 @@
-package cn.jascript.zt808.util;
+package cn.jascript.zt808.message.helper;
 
 import cn.jascript.zt808.constants.MsgId;
 import cn.jascript.zt808.model.PlatformMessage;

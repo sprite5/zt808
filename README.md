@@ -78,6 +78,27 @@
 
 ---
 
+## 测试（基础回归）
+
+项目提供 `PipelineSmokeTest` 作为基础回归（baseline）测试：
+
+- 覆盖 Netty pipeline 关键环节（切帧/反转义/BCC/解码/业务分发/编码）
+- 典型链路（注册/鉴权/心跳/位置）应能正常跑通并产生正确回包
+
+如果该测试失败，通常意味着接入层核心链路回归，建议优先检查：
+
+- 编解码（escape/BCC/header/bodyLength）
+- `DataEventHandler`（鉴权拦截/排重/回包逻辑）
+- `application.yaml` 中 provider 映射与 `replyMode` 配置
+
+运行方式：
+
+```bash
+mvn -q test -Dtest=PipelineSmokeTest
+```
+
+---
+
  ## 配置说明（application.yaml）
 
  主要配置集中在：`src/main/resources/application.yaml`。

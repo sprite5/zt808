@@ -1,12 +1,12 @@
 package cn.jascript.zt808.message.parser.provider;
 
 import cn.jascript.zt808.config.AppConfig;
+import cn.jascript.zt808.message.helper.ReplyHelper;
 import cn.jascript.zt808.message.parser.MsgParserProvider;
 import cn.jascript.zt808.model.TerminalMessage;
 import cn.jascript.zt808.model.dto.AuthDTO;
 import cn.jascript.zt808.model.dto.BaseDTO;
 import cn.jascript.zt808.session.SessionManager;
-import cn.jascript.zt808.util.ReplyHelper;
 import io.netty.channel.Channel;
 
 import java.util.Date;
