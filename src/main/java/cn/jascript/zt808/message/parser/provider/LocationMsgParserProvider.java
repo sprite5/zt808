@@ -24,6 +24,7 @@ public class LocationMsgParserProvider implements MsgParserProvider {
     
     // Status Bit Positions
     private static final int BIT_ACC = 0;
+    private static final int BIT_LOCATED = 1;
 
     // Alarm Bit Positions (JT/T 808-2019)
     private static final int BIT_SOS = 0;
@@ -86,6 +87,7 @@ public class LocationMsgParserProvider implements MsgParserProvider {
         dto.setLocationTime(parseBcdTime(timeBytes));
 
         dto.setAccState(CodecUtil.checkBit(status, BIT_ACC));
+        dto.setLocated(CodecUtil.checkBit(status, BIT_LOCATED));
 
         if (buf.isReadable()) {
             var extra = new byte[buf.readableBytes()];
@@ -95,7 +97,7 @@ public class LocationMsgParserProvider implements MsgParserProvider {
 
         return dto;
     }
-
+    //默认对标准协议的报警处理,特殊需求可以走ext处理
     private Set<AlarmType> parseAlarm(int alarm) {
         var set = EnumSet.noneOf(StandardAlarmType.class);
         if (CodecUtil.checkBit(alarm, BIT_SOS)) 

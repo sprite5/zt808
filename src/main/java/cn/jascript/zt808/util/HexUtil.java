@@ -9,6 +9,7 @@ public class HexUtil {
     private HexUtil() {
     }
 
+    // 将字节数组转为大写 HEX 字符串
     public static String toUpperHex(byte[] bytes) {
         if (Objects.isNull(bytes) || bytes.length == 0)
             return "";

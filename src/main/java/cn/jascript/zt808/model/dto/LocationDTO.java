@@ -26,10 +26,13 @@ public class LocationDTO implements BaseDTO {
 
     private Map<String, String> ext = new HashMap<>();
 
-    //点火信息,null为未知
+    //点火信息
     private Boolean accState;
 
-    //速度,-1表示未知
+    //是否定位
+    private Boolean located;
+
+    //速度,单位: 1/10 km/h，-1表示未知
     private Integer speed = -1;
 
     //gps星数,-1表示未知

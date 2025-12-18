@@ -122,9 +122,12 @@
      D["MessageDecoder<br/>解析消息头+体"]
      E["DataEventHandler<br/>业务分发/鉴权拦截/排重"]
    end
+
+   subgraph SESSION[会话与路由]
+     SM["SessionManager<br/>会话注册/绑定/鉴权标记"]
+   end
  
    subgraph BIZ[业务组件]
-     SM["SessionManager<br/>会话注册/绑定/鉴权标记"]
      PF["MsgParserProviderFactory<br/>msgId 映射 ParserProvider"]
      EF["MsgExtParserProviderFactory<br/>msgId 映射 ExtProvider"]
      FW["ForwardProviderFactory<br/>转发 DTO"]

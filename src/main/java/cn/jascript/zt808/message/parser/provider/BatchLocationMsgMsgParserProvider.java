@@ -36,6 +36,7 @@ public class BatchLocationMsgMsgParserProvider extends LocationMsgParserProvider
             if (buf.readableBytes() < len)
                 break;
             ByteBuf slice = buf.readSlice(len);
+            //复用LocationMsgParserProvider解析位置
             LocationDTO dto = parseSingleLocation(slice, terminalId);
             dto.setReceiveTime(new Date());
             dto.getExt().put("batchType", String.valueOf(type));

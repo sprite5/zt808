@@ -44,8 +44,17 @@ public class DecoderFactory {
                 byte b = in.readByte();
                 if (b == 0x7D) {
                     byte next = in.readByte();
-                    if (next == 0x01) decoded.writeByte(0x7D);
-                    else if (next == 0x02) decoded.writeByte(0x7E);
+                    if (next == 0x01)
+                        decoded.writeByte(0x7D);
+                    else if (next == 0x02)
+                        decoded.writeByte(0x7E);
+                    else {
+                        // JT/T 808 标准转义只定义：0x7D 0x01 -> 0x7D，0x7D 0x02 -> 0x7E。
+                        // 但实际设备可能会上报非标准序列（例如 0x7D 0x40）。
+                        // 为避免“吞字节”导致后续 BCC 校验失败/报文错位，这里采用容错策略：按字面写回 0x7D 与其后继字节。
+                        decoded.writeByte(0x7D);
+                        decoded.writeByte(next);
+                    }
                 } else {
                     decoded.writeByte(b);
                 }
